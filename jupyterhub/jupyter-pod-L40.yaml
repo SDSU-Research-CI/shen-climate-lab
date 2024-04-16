@@ -14,6 +14,13 @@ spec:
             operator: In
             values:
             - NVIDIA-L40
+  initContainers:
+  - name: take-data-dir-ownership
+    image: alpine:3
+    command: ["/bin/sh","-c","chown 0:100 /home/jovyan && chmod 775 /home/jovyan"] 
+    volumeMounts:
+    - mountPath: /home/jovyan
+      name: jovyan-home
   containers:
   - name: gpu-container
     image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp:v1.3
@@ -30,10 +37,15 @@ spec:
     volumeMounts:
     - mountPath: /home/jovyan
       name: jovyan-home
+    - mountPath: /home/jovyan/shared/fourcastnet
+      name: fourcastnet-training-data
   volumes:
   - name: jovyan-home
     persistentVolumeClaim:
       claimName: jupyter-volume-username
+  - name: fourcastnet-training-data
+    persistentVolumeClaim:
+      claimName: fourcastnet-training-data
   tolerations:
   - key: nautilus.io/csu-tide
     operator: Exists
