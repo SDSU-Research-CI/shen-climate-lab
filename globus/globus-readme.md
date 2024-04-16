@@ -93,7 +93,7 @@ globus endpoint search --filter-scope my-endpoints
 If you wish to stop the pod running Globus, first check the statefulset status:
 
 ```
-kubectl get statefulset -n your_namespace
+kubectl get statefulset -n sdsu-shen-climate-lab
 ```
 
 If still deployed, decrease replicas to 0:
