@@ -12,4 +12,5 @@ The following PVCs (disks) are available in the sdsu-shen-climate-lab namespace 
 
 ## Example Code
 
+- [JupyterLab Pod Examples](/jupyterhub)
 - [Globus Deployment to populate FourCastNet PVC](/globus)
