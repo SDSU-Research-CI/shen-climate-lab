@@ -28,7 +28,7 @@ kubectl get pvc -n sdsu-shen-climate-lab
 
 ### Step 3: Create the Pod
 
-IMPORTANT: Create a copy of the jupyter-pod-L40.yaml file and modify the "jupyterpod-username" name in the file (line 4) and "jupyter-volume-username" (line 45) replacing "username" with your username. If you don't do this, you may conflict with someone else using the default name.
+IMPORTANT: Create a copy of the jupyter-pod-L40.yaml file and modify the "jupyterpod-username" name in the file (line 4) and "jupyter-volume-username" (line 47) replacing "username" with your username. If you don't do this, you may conflict with someone else using the default name.
 
 Create pod:
 
