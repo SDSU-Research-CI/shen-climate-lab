@@ -39,6 +39,8 @@ spec:
       name: jovyan-home
     - mountPath: /home/jovyan/shared/fourcastnet
       name: fourcastnet-training-data
+    - mountPath: /dev/shm
+      name: dshm
   volumes:
   - name: jovyan-home
     persistentVolumeClaim:
@@ -46,6 +48,9 @@ spec:
   - name: fourcastnet-training-data
     persistentVolumeClaim:
       claimName: fourcastnet-training-data
+  - name: dshm
+    emptyDir:
+      medium: Memory
   tolerations:
   - key: nautilus.io/csu-tide
     operator: Exists
