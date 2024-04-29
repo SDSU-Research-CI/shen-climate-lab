@@ -26,7 +26,7 @@ spec:
           name: jovyan-home
       containers:
       - name: gpu-container
-        image: gitlab-registry.nrp-nautilus.io/prp/jupyter-stack/prp:v1.3
+        image: henrylisdsu/climate-lab-notebook:v1.3
         command: ["jupyter", "lab", "--ip='0.0.0.0'"]
         resources:
           limits:
