@@ -29,13 +29,14 @@ spec:
         image: henrylisdsu/climate-lab-notebook:v1.3
         command: ["jupyter", "lab", "--ip='0.0.0.0'"]
         resources:
+          # limits can only be 1.2 the requests per NRP rules
           limits:
-            cpu: "2"
-            memory: 4Gi
+            cpu: "2.4"
+            memory: 9.6G
             nvidia.com/gpu: 1
           requests:
-            cpu: "1"
-            memory: 1Gi
+            cpu: "2"
+            memory: 8G
             nvidia.com/gpu: 1
         volumeMounts:
         - mountPath: /home/jovyan

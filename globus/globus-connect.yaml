@@ -20,12 +20,13 @@ spec:
         image: gitlab-registry.nrp-nautilus.io/prp/globus-connect:7f540862
         # image: gitlab-registry.nrp-nautilus.io/prp/globus-connect
         resources:
+          # limits can only be 1.2 the requests per NRP rules        
           limits:
-            memory: 1Gi
-            cpu: 1
+            memory: 1.2G
+            cpu: 1200m
           requests:
-            memory: 100Mi
-            cpu: 100m
+            memory: 1G
+            cpu: 1
         ports:
         - containerPort: 80
           name: web
