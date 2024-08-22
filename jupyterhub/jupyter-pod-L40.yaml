@@ -1,7 +1,8 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: jupyterpod-username
+  # change the name of the jupyterpod
+  # name: jupyterpod-{change-username}
 spec:
   template:
     spec:
@@ -16,6 +17,7 @@ spec:
                 operator: In
                 values:
                 - NVIDIA-L40
+                # - NVIDIA-A100-80GB-PCIe
       restartPolicy: Never
       initContainers:
       - name: take-data-dir-ownership
@@ -26,18 +28,22 @@ spec:
           name: jovyan-home
       containers:
       - name: gpu-container
-        image: henrylisdsu/climate-lab-notebook:v1.3
+        image: henrylisdsu/nvidia-cuda-12.4:v2.5
         command: ["jupyter", "lab", "--ip='0.0.0.0'"]
         resources:
           # limits can only be 1.2 the requests per NRP rules
           limits:
             cpu: "2.4"
             memory: 9.6G
-            nvidia.com/gpu: 1
+            # nvidia.com/a100: 1
+            nvidia.com/gpu: "1"
+            ephemeral-storage: 100Gi
           requests:
             cpu: "2"
             memory: 8G
-            nvidia.com/gpu: 1
+            # nvidia.com/a100: 1
+            nvidia.com/gpu: "1"
+            ephemeral-storage: 100Gi
         volumeMounts:
         - mountPath: /home/jovyan
           name: jovyan-home
@@ -48,7 +54,8 @@ spec:
       volumes:
       - name: jovyan-home
         persistentVolumeClaim:
-          claimName: jupyter-volume-username
+          #change the name of the jupyterpod
+          # claimName: jupyter-volume-{change-name}
       - name: fourcastnet-training-data
         persistentVolumeClaim:
           claimName: fourcastnet-training-data
