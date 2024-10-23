@@ -14,7 +14,7 @@ Note: All the example below still include the `-n NAMESPACE` for reference.
 
 ### Step 2: Create Personal Volume/PVC
 
-IMPORTANT: Create a copy of the jupyter-volume.yaml file and modify the "jupyter-volume-username" name in the file (line 4) replacing "username" with your username. If you don't do this, you will not have your own volume/PVC where your files are stored.
+IMPORTANT: Create a copy of the jupyter-volume.yaml file and modify the "jupyter-volume-{change name}" name in the file (line 5) replacing "username" with your username. If you don't do this, you will not have your own volume/PVC where your files are stored.
 
 ```
 kubectl create -f jupyter-volume.yaml -n sdsu-shen-climate-lab
@@ -28,7 +28,7 @@ kubectl get pvc -n sdsu-shen-climate-lab
 
 ### Step 3: Create the Pod
 
-IMPORTANT: Create a copy of the jupyter-pod-L40.yaml file and modify the "jupyterpod-username" name in the file (line 4) and "jupyter-volume-username" (line 50) replacing "username" with your username. If you don't do this, you may conflict with someone else using the default name.
+IMPORTANT: Create a copy of the jupyter-pod-L40.yaml file and modify the "jupyterpod-{change-username}" name in the file (line 5) and "jupyter-volume-{change-name}" (line 62) replacing "username" with your username. If you don't do this, you may conflict with someone else using the default name.
 
 Create pod:
 
