@@ -1,70 +1,75 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   # TODO: uncomment change the name of the jupyterpod below
   # name: jupyterpod-{change-username}
 spec:
-
-  affinity:
-    nodeAffinity:
-      requiredDuringSchedulingIgnoredDuringExecution:
-        nodeSelectorTerms:
-        - matchExpressions:
-          - key: nautilus.io/csu-tide
-            operator: Exists
-          - key: nvidia.com/gpu.product
-            operator: In
-            values:
-            - NVIDIA-L40
-            # - NVIDIA-A100-80GB-PCIe
-  restartPolicy: Never
-  initContainers:
-  - name: take-data-dir-ownership
-    image: alpine:3
-    command: ["/bin/sh","-c","chown 0:100 /home/jovyan && chmod 775 /home/jovyan"] 
-    volumeMounts:
-    - mountPath: /home/jovyan
-      name: jovyan-home
-  containers:
-  - name: gpu-container
-    image: henrylisdsu/nvidia-cuda-12.4:v2.5
-    command: ["jupyter", "lab", "--ip='0.0.0.0'"]
-    resources:
-      # limits can only be 1.2 the requests per NRP rules
-      limits:
-        cpu: "2.4"
-        memory: 9.6G
-        # nvidia.com/a100: 1
-        nvidia.com/gpu: "1"
-        ephemeral-storage: 100Gi
-      requests:
-        cpu: "2"
-        memory: 8G
-        # nvidia.com/a100: 1
-        nvidia.com/gpu: "1"
-        ephemeral-storage: 100Gi
-    volumeMounts:
-    - mountPath: /home/jovyan
-      name: jovyan-home
-    - mountPath: /home/jovyan/shared/fourcastnet
-      name: fourcastnet-training-data
-    - mountPath: /dev/shm
-      name: dshm
-  volumes:
-  - name: jovyan-home
-    persistentVolumeClaim:
-      # TODO: uncomment change the name of the pvc name below
-      # claimName: jupyter-volume-{change-name}
-  - name: fourcastnet-training-data
-    persistentVolumeClaim:
-      claimName: fourcastnet-training-data
-  - name: dshm
-    emptyDir:
-      medium: Memory
-  tolerations:
-  - key: nautilus.io/csu-tide
-    operator: Exists
-    effect: NoSchedule
-  - key: nautilus.io/sdsu-fix
-    operator: Exists
-    effect: NoSchedule
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jupyterpod
+  template:
+    metadata:
+      labels:
+        app: jupyterpod
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/csu-tide
+                operator: Exists
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-L40
+                # - NVIDIA-A100-80GB-PCIe
+      restartPolicy: Always
+      initContainers:
+      - name: take-data-dir-ownership
+        image: alpine:3
+        command: ["/bin/sh","-c","chown 0:100 /home/jovyan && chmod 775 /home/jovyan"]
+        volumeMounts:
+        - mountPath: /home/jovyan
+          name: jovyan-home
+      containers:
+      - name: gpu-container
+        image: henrylisdsu/nvidia-cuda-12.4:v2.5
+        command: ["jupyter", "lab", "--ip='0.0.0.0'"]
+        resources:
+          limits:
+            cpu: "2.4"
+            memory: 9.6G
+            nvidia.com/gpu: "1"
+            ephemeral-storage: 100Gi
+          requests:
+            cpu: "2"
+            memory: 8G
+            nvidia.com/gpu: "1"
+            ephemeral-storage: 100Gi
+        volumeMounts:
+        - mountPath: /home/jovyan
+          name: jovyan-home
+        - mountPath: /home/jovyan/shared/fourcastnet
+          name: fourcastnet-training-data
+        - mountPath: /dev/shm
+          name: dshm
+      volumes:
+      - name: jovyan-home
+        persistentVolumeClaim:
+        # TODO: uncomment change the name of the pvc name below
+        # claimName: jupyter-volume-{change-name}
+      - name: fourcastnet-training-data
+        persistentVolumeClaim:
+          claimName: fourcastnet-training-data
+      - name: dshm
+        emptyDir:
+          medium: Memory
+      tolerations:
+      - key: nautilus.io/csu-tide
+        operator: Exists
+        effect: NoSchedule
+      - key: nautilus.io/sdsu-fix
+        operator: Exists
+        effect: NoSchedule
