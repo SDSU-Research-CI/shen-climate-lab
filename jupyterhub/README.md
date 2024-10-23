@@ -49,7 +49,7 @@ kubectl get pods -n sdsu-shen-climate-lab
 Look for the pod with your username in it. Once running, collect your pod's logs:
 
 ```
-kubectl logs jupyterpod-username -n sdsu-shen-climate-lab
+kubectl logs jupyterpod-{username} -n sdsu-shen-climate-lab
 ```
 
 From the output, copy the URL to the clipboard that starts with http://127.0.0.1./. 
@@ -57,7 +57,7 @@ From the output, copy the URL to the clipboard that starts with http://127.0.0.1
 In a second terminal window, run the following command to set up port forwarding between your computer and the container running Jupyter.
 
 ```
-kubectl port-forward jupyterpod-username -n sdsu-shen-climate-lab 8888:8888
+kubectl port-forward jupyterpod-{username} -n sdsu-shen-climate-lab 8888:8888
 ```
 
 *Note*: If you get an error message indicating port 8888 is already taken, simply change the port number on the left side of the colon in the above command i.e. `8889:8888`.
