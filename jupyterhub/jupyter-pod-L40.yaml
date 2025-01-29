@@ -16,6 +16,12 @@ spec:
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
+            # Uncomment to select CSU-tide labelled nodes
+            # nodeSelectorTerms:
+            # - matchExpressions:
+            #   - key: nautilus.io/csu-tide
+            #     operator: Exists
+            # Added to select rci-nrp-gpu-08.sdsu.edu instead of the label
             nodeSelectorTerms:
             - matchExpressions:
               - key: kubernetes.io/hostname
@@ -81,6 +87,7 @@ spec:
       - key: nautilus.io/sdsu-fix
         operator: Exists
         effect: NoSchedule
+      # Added this to change to tolerate nautilus.io/shen-lab taint
       - key: nautilus.io/shen-lab
         operator: Exists
         effect: NoSchedule
