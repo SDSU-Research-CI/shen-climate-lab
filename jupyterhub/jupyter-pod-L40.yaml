@@ -1,30 +1,33 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  # TODO: uncomment change the name of the jupyterpod below
-  # name: jupyterpod-{change-username}
+# TODO: Change volume to the name of your deployment name
+  name: jupyter-deployment-{name}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jupyterpod
+      app: jupyter-deployment
   template:
     metadata:
       labels:
-        app: jupyterpod
+        app: jupyter-deployment
     spec:
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: nautilus.io/csu-tide
-                operator: Exists
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                 - rci-nrp-gpu-08.sdsu.edu
               - key: nvidia.com/gpu.product
                 operator: In
                 values:
-                - NVIDIA-L40
-                # - NVIDIA-A100-80GB-PCIe
+                # Change the type of GPU
+                # - NVIDIA-L40
+                - NVIDIA-A100-80GB-PCIe
       restartPolicy: Always
       initContainers:
       - name: take-data-dir-ownership
@@ -36,18 +39,23 @@ spec:
       containers:
       - name: gpu-container
         image: henrylisdsu/nvidia-cuda-12.4:v2.5
-        command: ["jupyter", "lab", "--ip='0.0.0.0'"]
+        command: ["jupyter", "lab", "--ip=0.0.0.0"]
         resources:
+        # Limits are 1.2x of requested 
           limits:
-            cpu: "2.4"
-            memory: 9.6G
-            nvidia.com/gpu: "1"
-            ephemeral-storage: 100Gi
+            cpu: "12"
+            memory: "100Gi"
+            # Change the number of GPU required (up to 4)
+            # nvidia.com/gpu: "1"
+            nvidia.com/a100: "1"
+            ephemeral-storage: "100Gi"
           requests:
-            cpu: "2"
-            memory: 8G
-            nvidia.com/gpu: "1"
-            ephemeral-storage: 100Gi
+            cpu: "10"
+            memory: "64Gi"
+            # Change the number of GPU required (up to 4)
+            # nvidia.com/gpu: "1"
+            nvidia.com/a100: "1"
+            ephemeral-storage: "100Gi"
         volumeMounts:
         - mountPath: /home/jovyan
           name: jovyan-home
@@ -58,8 +66,8 @@ spec:
       volumes:
       - name: jovyan-home
         persistentVolumeClaim:
-        # TODO: uncomment change the name of the pvc name below
-        # claimName: jupyter-volume-{change-name}
+        # TODO: Change volume to the name of your volume or claim
+          claimName: jupyter-volume-{name}
       - name: fourcastnet-training-data
         persistentVolumeClaim:
           claimName: fourcastnet-training-data
@@ -71,5 +79,8 @@ spec:
         operator: Exists
         effect: NoSchedule
       - key: nautilus.io/sdsu-fix
+        operator: Exists
+        effect: NoSchedule
+      - key: nautilus.io/shen-lab
         operator: Exists
         effect: NoSchedule
