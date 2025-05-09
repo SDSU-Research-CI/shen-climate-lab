@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
 # TODO: Change volume to the name of your deployment name
-  name: jupyter-deployment-{name}
+  name: jupyter-deployment-{user}
 spec:
   replicas: 1
   selector:
@@ -17,24 +17,24 @@ spec:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             # Uncomment to select CSU-tide labelled nodes
-            # nodeSelectorTerms:
-            # - matchExpressions:
-            #   - key: nautilus.io/csu-tide
-            #     operator: Exists
-            # Added to select rci-nrp-gpu-08.sdsu.edu instead of the label
             nodeSelectorTerms:
             - matchExpressions:
-              - key: kubernetes.io/hostname
-                operator: In
-                values:
-                 - rci-nrp-gpu-08.sdsu.edu
+              - key: nautilus.io/csu-tide
+                operator: Exists
               - key: nvidia.com/gpu.product
                 operator: In
                 values:
-                # Change the type of GPU
-                # - NVIDIA-L40
-                - NVIDIA-A100-80GB-PCIe
+                - NVIDIA-L40
+                # - NVIDIA-A100-80GB-PCIe
       restartPolicy: Always
+            # Added to select rci-nrp-gpu-08.sdsu.edu instead of the label
+            # nodeSelectorTerms:
+            # - matchExpressions:
+            #   - key: kubernetes.io/hostname
+            #     operator: In
+            #     values:
+            #      - rci-nrp-gpu-08.sdsu.edu
+      # restartPolicy: Always
       initContainers:
       - name: take-data-dir-ownership
         image: alpine:3
@@ -47,21 +47,21 @@ spec:
         image: henrylisdsu/nvidia-cuda-12.4:v2.5
         command: ["jupyter", "lab", "--ip=0.0.0.0"]
         resources:
-        # Limits are 1.2x of requested 
+        # Limits are up to 1.2x of requested 
           limits:
-            cpu: "12"
-            memory: "100Gi"
-            # Change the number of GPU required (up to 4)
-            # nvidia.com/gpu: "1"
-            nvidia.com/a100: "1"
-            ephemeral-storage: "100Gi"
-          requests:
-            cpu: "10"
+            cpu: "5"
             memory: "64Gi"
             # Change the number of GPU required (up to 4)
-            # nvidia.com/gpu: "1"
-            nvidia.com/a100: "1"
-            ephemeral-storage: "100Gi"
+            nvidia.com/gpu: "1"
+            # nvidia.com/a100: "1"
+            ephemeral-storage: "80Gi"
+          requests:
+            cpu: "5"
+            memory: "64Gi"
+            # Change the number of GPU required (up to 4)
+            nvidia.com/gpu: "1"
+            # nvidia.com/a100: "1"
+            ephemeral-storage: "80Gi"
         volumeMounts:
         - mountPath: /home/jovyan
           name: jovyan-home
@@ -73,7 +73,7 @@ spec:
       - name: jovyan-home
         persistentVolumeClaim:
         # TODO: Change volume to the name of your volume or claim
-          claimName: jupyter-volume-{name}
+          claimName: jupyter-volume-{user} 
       - name: fourcastnet-training-data
         persistentVolumeClaim:
           claimName: fourcastnet-training-data
@@ -88,6 +88,6 @@ spec:
         operator: Exists
         effect: NoSchedule
       # Added this to change to tolerate nautilus.io/shen-lab taint
-      - key: nautilus.io/shen-lab
-        operator: Exists
-        effect: NoSchedule
+      # - key: nautilus.io/shen-lab
+      #   operator: Exists
+      #   effect: NoSchedule
