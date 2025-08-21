@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-# TODO: Change volume to the name of your deployment name
+# TODO: Change user to your ID so the deployment will be unique
   name: jupyter-deployment-{user}
 spec:
   replicas: 1
@@ -86,6 +86,10 @@ spec:
         effect: NoSchedule
       - key: nautilus.io/sdsu-fix
         operator: Exists
+        effect: NoSchedule
+      - key: nautilus.io/reservation
+        operator: Equal
+        value: csu-tide
         effect: NoSchedule
       # Added this to change to tolerate nautilus.io/shen-lab taint
       # - key: nautilus.io/shen-lab
